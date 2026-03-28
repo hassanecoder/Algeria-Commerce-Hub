@@ -1,22 +1,34 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Algerian E-commerce Seller Dashboard API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Dashboard overview data
+  - name: products
+    description: Product management
+  - name: orders
+    description: Order management
+  - name: customers
+    description: Customer management
+  - name: analytics
+    description: Analytics and reports
+  - name: inventory
+    description: Inventory management
+  - name: notifications
+    description: Notifications
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +36,441 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard overview statistics
+      responses:
+        "200":
+          description: Dashboard stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/revenue-chart:
+    get:
+      operationId: getRevenueChart
+      tags: [dashboard]
+      summary: Get revenue chart data
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: 30d
+      responses:
+        "200":
+          description: Revenue chart data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RevenueDataPoint"
+
+  /dashboard/recent-orders:
+    get:
+      operationId: getRecentOrders
+      tags: [dashboard]
+      summary: Get recent orders for dashboard
+      responses:
+        "200":
+          description: Recent orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+  /dashboard/top-products:
+    get:
+      operationId: getTopProducts
+      tags: [dashboard]
+      summary: Get top selling products
+      responses:
+        "200":
+          description: Top products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopProduct"
+
+  /dashboard/wilaya-sales:
+    get:
+      operationId: getWilayaSales
+      tags: [dashboard]
+      summary: Get sales breakdown by Algerian wilaya
+      responses:
+        "200":
+          description: Sales by wilaya
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WilayaSales"
+
+  /products:
+    get:
+      operationId: getProducts
+      tags: [products]
+      summary: List all products
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, out_of_stock]
+      responses:
+        "200":
+          description: Products list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductsResponse"
+    post:
+      operationId: createProduct
+      tags: [products]
+      summary: Create a new product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProductInput"
+      responses:
+        "201":
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+
+  /products/{id}:
+    get:
+      operationId: getProduct
+      tags: [products]
+      summary: Get product by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    put:
+      operationId: updateProduct
+      tags: [products]
+      summary: Update product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProductInput"
+      responses:
+        "200":
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+    delete:
+      operationId: deleteProduct
+      tags: [products]
+      summary: Delete product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /orders:
+    get:
+      operationId: getOrders
+      tags: [orders]
+      summary: List all orders
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: wilaya
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Orders list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrdersResponse"
+
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get order details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderDetail"
+    put:
+      operationId: updateOrderStatus
+      tags: [orders]
+      summary: Update order status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrderStatusInput"
+      responses:
+        "200":
+          description: Order updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /customers:
+    get:
+      operationId: getCustomers
+      tags: [customers]
+      summary: List all customers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: wilaya
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Customers list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomersResponse"
+
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      tags: [customers]
+      summary: Get customer details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Customer details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerDetail"
+
+  /analytics/sales:
+    get:
+      operationId: getSalesAnalytics
+      tags: [analytics]
+      summary: Get detailed sales analytics
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: 30d
+      responses:
+        "200":
+          description: Sales analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SalesAnalytics"
+
+  /analytics/categories:
+    get:
+      operationId: getCategoryAnalytics
+      tags: [analytics]
+      summary: Get sales by category
+      responses:
+        "200":
+          description: Category analytics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryAnalytics"
+
+  /analytics/payment-methods:
+    get:
+      operationId: getPaymentMethodAnalytics
+      tags: [analytics]
+      summary: Get breakdown by payment method
+      responses:
+        "200":
+          description: Payment method analytics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentMethodAnalytics"
+
+  /inventory:
+    get:
+      operationId: getInventory
+      tags: [inventory]
+      summary: Get inventory status
+      parameters:
+        - name: filter
+          in: query
+          schema:
+            type: string
+            enum: [all, low_stock, out_of_stock]
+            default: all
+      responses:
+        "200":
+          description: Inventory list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InventoryItem"
+
+  /inventory/{productId}/update:
+    put:
+      operationId: updateInventory
+      tags: [inventory]
+      summary: Update product inventory
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInventoryInput"
+      responses:
+        "200":
+          description: Inventory updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InventoryItem"
+
+  /notifications:
+    get:
+      operationId: getNotifications
+      tags: [notifications]
+      summary: Get notifications
+      responses:
+        "200":
+          description: Notifications list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +478,494 @@ components:
       properties:
         status:
           type: string
+      required: [status]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success, message]
+
+    DashboardStats:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+          description: Total revenue in DZD
+        totalOrders:
+          type: integer
+        totalProducts:
+          type: integer
+        totalCustomers:
+          type: integer
+        revenueGrowth:
+          type: number
+          description: Percentage growth vs previous period
+        ordersGrowth:
+          type: number
+        customersGrowth:
+          type: number
+        pendingOrders:
+          type: integer
+        lowStockProducts:
+          type: integer
+        averageOrderValue:
+          type: number
       required:
+        - totalRevenue
+        - totalOrders
+        - totalProducts
+        - totalCustomers
+        - revenueGrowth
+        - ordersGrowth
+        - customersGrowth
+        - pendingOrders
+        - lowStockProducts
+        - averageOrderValue
+
+    RevenueDataPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        revenue:
+          type: number
+        orders:
+          type: integer
+      required: [date, revenue, orders]
+
+    TopProduct:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        totalSold:
+          type: integer
+        revenue:
+          type: number
+        imageUrl:
+          type: string
+      required: [id, name, category, totalSold, revenue]
+
+    WilayaSales:
+      type: object
+      properties:
+        wilaya:
+          type: string
+        wilayaCode:
+          type: string
+        orders:
+          type: integer
+        revenue:
+          type: number
+        percentage:
+          type: number
+      required: [wilaya, wilayaCode, orders, revenue, percentage]
+
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        nameAr:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+          description: Price in DZD
+        stock:
+          type: integer
+        sku:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, out_of_stock]
+        imageUrl:
+          type: string
+        totalSold:
+          type: integer
+        rating:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - category
+        - price
+        - stock
+        - sku
+        - status
+        - totalSold
+        - createdAt
+        - updatedAt
+
+    CreateProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+        nameAr:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        stock:
+          type: integer
+        sku:
+          type: string
+        imageUrl:
+          type: string
+      required: [name, category, price, stock, sku]
+
+    UpdateProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+        nameAr:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        stock:
+          type: integer
+        status:
+          type: string
+          enum: [active, inactive, out_of_stock]
+        imageUrl:
+          type: string
+
+    ProductsResponse:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/Product"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [products, total, page, limit]
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        orderNumber:
+          type: string
+        customerName:
+          type: string
+        customerPhone:
+          type: string
+        wilaya:
+          type: string
+        commune:
+          type: string
+        totalAmount:
+          type: number
+          description: Total in DZD
+        status:
+          type: string
+          enum: [pending, confirmed, processing, shipped, delivered, cancelled, returned]
+        paymentMethod:
+          type: string
+          enum: [cash_on_delivery, ccp, baridimob, cib, virement]
+        paymentStatus:
+          type: string
+          enum: [pending, paid, refunded]
+        itemCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - orderNumber
+        - customerName
+        - customerPhone
+        - wilaya
+        - totalAmount
+        - status
+        - paymentMethod
+        - paymentStatus
+        - itemCount
+        - createdAt
+
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        productName:
+          type: string
+        sku:
+          type: string
+        quantity:
+          type: integer
+        unitPrice:
+          type: number
+        totalPrice:
+          type: number
+      required: [id, productId, productName, sku, quantity, unitPrice, totalPrice]
+
+    OrderDetail:
+      allOf:
+        - $ref: "#/components/schemas/Order"
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/OrderItem"
+            address:
+              type: string
+            notes:
+              type: string
+          required: [items]
+
+    UpdateOrderStatusInput:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, confirmed, processing, shipped, delivered, cancelled, returned]
+        notes:
+          type: string
+      required: [status]
+
+    OrdersResponse:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: "#/components/schemas/Order"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [orders, total, page, limit]
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        wilaya:
+          type: string
+        commune:
+          type: string
+        totalOrders:
+          type: integer
+        totalSpent:
+          type: number
+        lastOrderAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - phone
+        - wilaya
+        - totalOrders
+        - totalSpent
+        - createdAt
+
+    CustomerDetail:
+      allOf:
+        - $ref: "#/components/schemas/Customer"
+        - type: object
+          properties:
+            orders:
+              type: array
+              items:
+                $ref: "#/components/schemas/Order"
+          required: [orders]
+
+    CustomersResponse:
+      type: object
+      properties:
+        customers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Customer"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+      required: [customers, total, page, limit]
+
+    SalesAnalytics:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+        totalOrders:
+          type: integer
+        averageOrderValue:
+          type: number
+        conversionRate:
+          type: number
+        revenueByDay:
+          type: array
+          items:
+            $ref: "#/components/schemas/RevenueDataPoint"
+        revenueByWeek:
+          type: array
+          items:
+            $ref: "#/components/schemas/RevenueDataPoint"
+        comparisonPrevious:
+          type: object
+          properties:
+            revenue:
+              type: number
+            orders:
+              type: integer
+            growth:
+              type: number
+          required: [revenue, orders, growth]
+      required:
+        - totalRevenue
+        - totalOrders
+        - averageOrderValue
+        - conversionRate
+        - revenueByDay
+        - revenueByWeek
+        - comparisonPrevious
+
+    CategoryAnalytics:
+      type: object
+      properties:
+        category:
+          type: string
+        orders:
+          type: integer
+        revenue:
+          type: number
+        percentage:
+          type: number
+        growth:
+          type: number
+      required: [category, orders, revenue, percentage, growth]
+
+    PaymentMethodAnalytics:
+      type: object
+      properties:
+        method:
+          type: string
+        label:
+          type: string
+        orders:
+          type: integer
+        revenue:
+          type: number
+        percentage:
+          type: number
+      required: [method, label, orders, revenue, percentage]
+
+    InventoryItem:
+      type: object
+      properties:
+        productId:
+          type: integer
+        productName:
+          type: string
+        sku:
+          type: string
+        category:
+          type: string
+        currentStock:
+          type: integer
+        minStock:
+          type: integer
+        maxStock:
+          type: integer
+        status:
+          type: string
+          enum: [ok, low, critical, out_of_stock]
+        lastRestocked:
+          type: string
+          format: date-time
+      required:
+        - productId
+        - productName
+        - sku
+        - category
+        - currentStock
+        - minStock
+        - maxStock
         - status
 
+    UpdateInventoryInput:
+      type: object
+      properties:
+        currentStock:
+          type: integer
+        minStock:
+          type: integer
+        maxStock:
+          type: integer
+      required: [currentStock]
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [new_order, low_stock, payment_received, order_cancelled, review]
+        title:
+          type: string
+        message:
+          type: string
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        relatedId:
+          type: integer
+      required: [id, type, title, message, isRead, createdAt]

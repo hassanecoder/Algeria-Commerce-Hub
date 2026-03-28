@@ -1,0 +1,17 @@
+packages:
+  "recharts": "Dashboard analytics charts and data visualization"
+  "framer-motion": "Page transitions and micro-interactions"
+  "date-fns": "Formatting dates"
+  "clsx": "Utility for constructing className strings conditionally"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+  "@hookform/resolvers": "Zod resolver for react-hook-form"
+  "react-hook-form": "Form state management"
+
+images:
+  - path: "artifacts/seller-dashboard/public/images/logo.png"
+    description: "Minimal modern geometric logo for a premium Algerian e-commerce business, featuring a sleek abstract box shape combined with a subtle crescent or star motif. Deep navy blue and bright emerald green/teal colors. High-end corporate style, isolated on transparent background."
+    aspect_ratio: "1:1"
+
+notes:
+  - Expects API client to be available at @workspace/api-client-react
+  - Assumes standard Shadcn-like UI or fallback UI components if not present

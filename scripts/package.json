@@ -6,6 +6,7 @@
   "scripts": {
     "hello": "tsx ./src/hello.ts",
     "seed-algeria": "tsx ./src/seed-algeria.ts",
+    "seed:prod": "SEED_MODE=bootstrap tsx ./src/seed-algeria.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

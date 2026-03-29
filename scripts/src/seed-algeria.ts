@@ -69,14 +69,24 @@ function randomDate(daysBack: number): Date {
 }
 
 async function seed() {
-  console.log("🌱 Seeding Algerian e-commerce data...");
+  const seedMode = process.env.SEED_MODE === "bootstrap" ? "bootstrap" : "reset";
+  console.log(`🌱 Seeding Algerian e-commerce data in ${seedMode} mode...`);
 
-  // Clear existing data
-  await db.delete(notificationsTable);
-  await db.delete(orderItemsTable);
-  await db.delete(ordersTable);
-  await db.delete(customersTable);
-  await db.delete(productsTable);
+  if (seedMode === "bootstrap") {
+    const existing = await db.select().from(productsTable).limit(1);
+    if (existing.length > 0) {
+      console.log("Bootstrap seed skipped; products already present");
+      process.exit(0);
+    }
+  }
+
+  if (seedMode === "reset") {
+    await db.delete(notificationsTable);
+    await db.delete(orderItemsTable);
+    await db.delete(ordersTable);
+    await db.delete(customersTable);
+    await db.delete(productsTable);
+  }
 
   // Insert products
   console.log("📦 Inserting products...");

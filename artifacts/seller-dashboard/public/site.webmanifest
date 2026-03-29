@@ -1,0 +1,21 @@
+{
+  "name": "Algerian Seller Dashboard",
+  "short_name": "Seller Hub",
+  "description": "Manage your Algerian e-commerce business with our powerful seller dashboard. Track orders, manage inventory, analyze sales, and grow your online store in Algeria.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7C3AED",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ]
+}

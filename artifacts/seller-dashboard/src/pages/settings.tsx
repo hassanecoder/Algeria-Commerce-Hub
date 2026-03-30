@@ -74,7 +74,7 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div className="w-full h-32 bg-muted rounded-xl flex items-center justify-center text-muted-foreground relative overflow-hidden">
                 <MapPin className="w-8 h-8 opacity-50 z-10" />
-                <div className="absolute inset-0 bg-[url('https://pixabay.com/get/gcf68b352ad8cc2ada2d11c82c12ab28a1c83cbe3d4e82eecbebadbc0bdac0c4b77218ce4444cfa1e620ea6d01c9311bdcf72760dd8d3d9f0acb017235ede9883_1280.jpg')] bg-cover bg-center opacity-20"></div>
+                <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&q=80')] bg-cover bg-center opacity-20"></div>
                 {/* map algeria placeholder */}
               </div>
               <div className="space-y-2">
